@@ -15,30 +15,16 @@ st.set_page_config(page_title="Chinese Lesson Flashcards", page_icon="🏮", lay
 
 st.markdown("""
     <style>
-    /* Hides standard menus, headers, and footers */
+    /* Catch-all to clear internal headers and native footers */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Hides the floating 'Made with Streamlit' action badges and viewer profile links */
+    /* Extra insurance for standard cloud platform elements */
     .stAppViewerFooter, .stAppDeployButton, [data-testid="stStatusWidget"], [data-testid="stHeader"] {
         display: none !important;
         visibility: hidden !important;
     }
-    
-    /* Your existing flashcard styles */
-    .flashcard-box {
-        padding: 40px;
-        border-radius: 15px;
-        background-color: #f9f9f9;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        text-align: center;
-        border: 2px solid #ff4b4b;
-        margin-bottom: 20px;
-    }
-    .chinese-text { font-size: 70px; font-weight: bold; color: #333333; margin: 0; }
-    .pinyin-text { font-size: 28px; color: #888888; font-style: italic; margin-top: 10px; }
-    .english-text { font-size: 32px; color: #ff4b4b; font-weight: 500; margin-top: 15px; }
     </style>
 """, unsafe_allow_html=True)
 
