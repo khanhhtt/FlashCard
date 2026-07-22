@@ -8,9 +8,10 @@ Created on Wed Jul 22 16:34:21 2026
 import streamlit as st
 import pandas as pd
 import random
+import os
 
 # Set up page styling
-st.set_page_config(page_title="Chinese Flashcard Hub", page_icon="🏮", layout="centered")
+st.set_page_config(page_title="Chinese Lesson Flashcards", page_icon="🏮", layout="centered")
 
 st.markdown("""
     <style>
@@ -29,58 +30,65 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🏮 Chinese Vocabulary Flashcards")
-st.write("Upload your vocabulary list to start studying. Share this page's link with anyone to let them practice too!")
+st.title("🏮 Video Lesson Flashcards")
 
-# 1. File Uploading (Expects columns: Chinese, Pinyin, English)
-uploaded_file = st.file_uploader("Upload your vocabulary file (CSV or Excel)", type=["csv", "xlsx"])
+# 1. Read the lesson parameter from the URL query
+# Example: https://streamlit.app
+query_params = st.query_params
+requested_lesson = query_params.get("lesson", "default")
 
-# Default fallback vocabulary data if no file is uploaded yet
-default_data = {
-    "Chinese": ["你好", "谢谢", "学习", "苹果"],
-    "Pinyin": ["nǐ hǎo", "xièxie", "xuéxí", "píngguǒ"],
-    "English": ["Hello", "Thank you", "To study / learn", "Apple"]
+# 2. Determine which file path to load
+lessons_dir = "lessons"
+file_loaded = False
+
+# Fallback sample vocabulary if the requested file isn't found
+fallback_data = {
+    "Chinese": ["你好", "谢谢", "学习"],
+    "Pinyin": ["nǐ hǎo", "xièxie", "xuéxí"],
+    "English": ["Hello", "Thank you", "To study"]
 }
 
-if uploaded_file is not None:
-    try:
-        if uploaded_file.name.endswith('.csv'):
-            df = pd.read_csv(uploaded_file)
-        else:
-            df = pd.read_excel(uploaded_file)
-        
-        # Simple validation
-        required_cols = ["Chinese", "Pinyin", "English"]
-        if not all(col in df.columns for col in required_cols):
-            st.error(f"Your file must contain these exact column headers: {', '.join(required_cols)}")
-            df = pd.DataFrame(default_data)
-    except Exception as e:
-        st.error(f"Error reading file: {e}")
-        df = pd.DataFrame(default_data)
+if requested_lesson != "default":
+    # Match URL parameter directly to a file name in the folder
+    csv_path = os.path.join(lessons_dir, f"{requested_lesson}.csv")
+    xlsx_path = os.path.join(lessons_dir, f"{requested_lesson}.xlsx")
+    
+    if os.path.exists(csv_path):
+        df = pd.read_csv(csv_path)
+        file_loaded = True
+    elif os.path.exists(xlsx_path):
+        df = pd.read_excel(xlsx_path)
+        file_loaded = True
+    else:
+        st.warning(f"Lesson '{requested_lesson}' not found. Loading default set.")
+        df = pd.DataFrame(fallback_data)
 else:
-    df = pd.DataFrame(default_data)
-    st.info("💡 Showing sample vocabulary. Upload your own file above to update the deck.")
+    df = pd.DataFrame(fallback_data)
 
-# 2. Setup Session State variables to keep track of current card index
-if "card_index" not in st.session_state:
+# Display context to the user based on the active lesson
+lesson_title = requested_lesson.replace("_", " ").title()
+st.subheader(f"📖 Current Unit: {lesson_title}")
+
+# 3. Setup Session State variables to keep track of current card index
+# We include the lesson name in the session key to reset index if they switch lessons
+if "current_lesson" not in st.session_state or st.session_state.current_lesson != requested_lesson:
+    st.session_state.current_lesson = requested_lesson
     st.session_state.card_index = 0
-if "flipped" not in st.session_state:
     st.session_state.flipped = False
 
-# Ensure the card index doesn't overshoot if a shorter file is uploaded
+# Ensure index safety limits
 if st.session_state.card_index >= len(df):
     st.session_state.card_index = 0
 
-# Get current word data
+# Get current row vocabulary data
 current_row = df.iloc[st.session_state.card_index]
 
 # Progress layout
 st.write(f"**Card {st.session_state.card_index + 1} of {len(df)}**")
 
-# 3. Render Flashcard
+# 4. Render Flashcard
 with st.container():
     if not st.session_state.flipped:
-        # Front of card (Hanzi Only)
         st.markdown(f"""
             <div class="flashcard-box">
                 <p class="chinese-text">{current_row['Chinese']}</p>
@@ -88,7 +96,6 @@ with st.container():
             </div>
         """, unsafe_allow_html=True)
     else:
-        # Back of card (Hanzi + Pinyin + English)
         st.markdown(f"""
             <div class="flashcard-box">
                 <p class="chinese-text">{current_row['Chinese']}</p>
@@ -98,8 +105,8 @@ with st.container():
             </div>
         """, unsafe_allow_html=True)
 
-# 4. Interaction Controls
-col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+# 5. Interactive Navigation Controls
+col1, col2, col3, col4 = st.columns()
 
 with col1:
     if st.button("⬅️ Previous"):
@@ -123,3 +130,4 @@ with col4:
         st.session_state.card_index = random.randint(0, len(df) - 1)
         st.session_state.flipped = False
         st.rerun()
+
