@@ -106,7 +106,7 @@ with st.container():
         """, unsafe_allow_html=True)
 
 # 5. Interactive Navigation Controls
-col1, col2, col3, col4 = st.columns()
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     if st.button("⬅️ Previous"):
