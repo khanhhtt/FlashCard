@@ -15,18 +15,40 @@ st.set_page_config(page_title="Chinese Lesson Flashcards", page_icon="🏮", lay
 
 st.markdown("""
     <style>
-    /* Catch-all to clear internal headers and native footers */
+    /* 1. Hides standard menus, headers, and footers */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Extra insurance for standard cloud platform elements */
-    .stAppViewerFooter, .stAppDeployButton, [data-testid="stStatusWidget"], [data-testid="stHeader"] {
+    /* 2. Target and completely remove the external Streamlit Cloud branding badges */
+    div[class^="viewerBadge_container"], 
+    div[class*="viewerBadge_container"],
+    .viewerBadge_container__1QSob, 
+    .styles_viewerBadge__1yB5_,
+    [data-testid="stViewerBadge"] {
         display: none !important;
         visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
     }
+    
+    /* Your existing flashcard styles */
+    .flashcard-box {
+        padding: 40px;
+        border-radius: 15px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        border: 2px solid #ff4b4b;
+        margin-bottom: 20px;
+    }
+    .chinese-text { font-size: 70px; font-weight: bold; color: #333333; margin: 0; }
+    .pinyin-text { font-size: 28px; color: #888888; font-style: italic; margin-top: 10px; }
+    .english-text { font-size: 32px; color: #ff4b4b; font-weight: 500; margin-top: 15px; }
     </style>
 """, unsafe_allow_html=True)
+
 
 st.title("🏮 Video Lesson Flashcards")
 
