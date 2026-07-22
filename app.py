@@ -15,6 +15,16 @@ st.set_page_config(page_title="Chinese Lesson Flashcards", page_icon="🏮", lay
 
 st.markdown("""
     <style>
+    /* Hides the Streamlit menu button and the 'View app source' link */
+    #MainMenu {visibility: hidden;}
+    
+    /* Hides the default top header bar completely */
+    header {visibility: hidden;}
+    
+    /* Hides the footer at the bottom of the page */
+    footer {visibility: hidden;}
+    
+    /* Your existing flashcard styles */
     .flashcard-box {
         padding: 40px;
         border-radius: 15px;
@@ -29,6 +39,7 @@ st.markdown("""
     .english-text { font-size: 32px; color: #ff4b4b; font-weight: 500; margin-top: 15px; }
     </style>
 """, unsafe_allow_html=True)
+
 
 st.title("🏮 Video Lesson Flashcards")
 
