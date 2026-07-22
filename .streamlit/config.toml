@@ -1,0 +1,7 @@
+[client]
+# This forces Streamlit into "viewer mode", stripping away platform toolbars and headers
+toolbarMode = "minimal"
+
+[ui]
+# Completely suppresses the cloud platform top bar and bottom action utilities
+hideTopBar = true
